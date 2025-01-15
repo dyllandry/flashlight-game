@@ -38,19 +38,15 @@ void update(void) {
 }
 
 void render(void) {
-	// Set the color used for drawing operations (Rect, Line, and Clear)
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	// Clear the current rendering target with the drawing color.
 	SDL_RenderClear(renderer);
 
 	draw_grid();
 
-	draw_rect(0, 0, 40, 80, 0xFF0000FF);
-
-	draw_pixel(20, 20, 0xFF00FF00);
-
+	// Copies the color buffer to a texture and copies the texture to the current rendering target.
 	render_color_buffer();
-	clear_color_buffer(0xFF3f446d);
+	clear_color_buffer(0xFF000000);
 
 	// Update the screen with any rendering performed since the previous call.
 	SDL_RenderPresent(renderer);

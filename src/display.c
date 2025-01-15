@@ -14,11 +14,6 @@ bool initialize_window(void) {
 		return false;
 	}
 
-	SDL_DisplayMode display_mode;
-	SDL_GetCurrentDisplayMode(0, &display_mode);
-	window_width = display_mode.w;
-	window_height = display_mode.h;
-
 	window = SDL_CreateWindow(
 		// No window title
 		NULL,
@@ -54,8 +49,6 @@ bool initialize_window(void) {
 		return false;
 	}
 
-	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-
 	return true;
 }
 
@@ -66,6 +59,7 @@ void clear_color_buffer(uint32_t color) {
 	}
 }
 
+// Copies the color buffer to a texture and copies the texture to the current rendering target.
 void render_color_buffer(void) {
 	// Update the given texture rectangle with new pixel data.
 	SDL_UpdateTexture(
@@ -98,7 +92,7 @@ void draw_grid(void) {
 	for (int row = 0; row < window_height; row++) {
 		for (int col = 0; col < window_width; col++) {
 			if (row % 10 == 0 && col % 10 == 0) {
-				color_buffer[(row*window_width) + col] = 0xFF21243d;
+				draw_pixel(col, row, 0xFF555555);
 			}
 		}
 	}
@@ -107,7 +101,7 @@ void draw_grid(void) {
 void draw_rect(int x, int y, int width, int height, uint32_t color) {
 	for (int row = y; row < height; row++) {
 		for (int col = x; col < width; col++) {
-			color_buffer[(row*window_width) + col] = color;
+			draw_pixel(col, row, color);
 		}
 	}
 }
