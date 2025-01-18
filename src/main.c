@@ -38,14 +38,20 @@ void update(void) {
 }
 
 void render(void) {
+	// Clear the current SDL rendering target with the drawing color. This lets
+	// us start the frame with a flat color on the screen.
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	// Clear the current rendering target with the drawing color.
 	SDL_RenderClear(renderer);
 
+	// Draw a grid on screen for debugging shape sizes.
 	draw_grid();
 
-	// Copies the color buffer to a texture and copies the texture to the current rendering target.
+	draw_walls(level1.walls);
+
+	// Copies our color buffer to an SDL texture and copies the SDL texture to
+	// the current SDL rendering target.
 	render_color_buffer();
+	// Clear our color buffer so we can start fresh in the next frame.
 	clear_color_buffer(0xFF000000);
 
 	// Update the screen with any rendering performed since the previous call.

@@ -6,6 +6,7 @@ uint32_t* color_buffer = NULL;
 SDL_Texture* color_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
+int cell_size = 20;
 
 bool initialize_window(void) {
 	// What bits of hardware do you want to initialize?
@@ -99,9 +100,23 @@ void draw_grid(void) {
 }
 
 void draw_rect(int x, int y, int width, int height, uint32_t color) {
-	for (int row = y; row < height; row++) {
-		for (int col = x; col < width; col++) {
-			draw_pixel(col, row, color);
+	for (int curr_y = y; curr_y < y + height; curr_y++) {
+		for (int curr_x = x; curr_x < x + width; curr_x++) {
+			draw_pixel(curr_x, curr_y, color);
+		}
+	}
+}
+
+void draw_walls(int walls[20][20]) {
+	int wall_padding = 2;
+	for (int y = 0; y < 20; y++) {
+		for (int x = 0; x < 20; x++) {
+			if (walls[y][x] == 1) {
+				int wall_y = (y * cell_size) + wall_padding;
+				int wall_x = (x * cell_size) + wall_padding;
+				int wall_size = cell_size - wall_padding;
+				draw_rect(wall_x, wall_y, wall_size, wall_size, 0xFFCCCCCC);
+			}
 		}
 	}
 }
