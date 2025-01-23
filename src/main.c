@@ -44,9 +44,10 @@ void render(void) {
 	SDL_RenderClear(renderer);
 
 	// Draw a grid on screen for debugging shape sizes.
-	draw_grid();
+	// draw_grid();
 
 	draw_walls(level1.walls);
+	draw_finish(level1.finish);
 
 	// Copies our color buffer to an SDL texture and copies the SDL texture to
 	// the current SDL rendering target.

@@ -7,6 +7,7 @@ SDL_Texture* color_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
 int cell_size = 20;
+uint32_t white = 0xFFCCCCCC;
 
 bool initialize_window(void) {
 	// What bits of hardware do you want to initialize?
@@ -114,10 +115,40 @@ void draw_walls(int walls[20][20]) {
 			if (walls[y][x] == 1) {
 				int wall_y = (y * cell_size) + wall_padding;
 				int wall_x = (x * cell_size) + wall_padding;
-				int wall_size = cell_size - wall_padding;
-				draw_rect(wall_x, wall_y, wall_size, wall_size, 0xFFCCCCCC);
+				int wall_size = cell_size - (wall_padding * 2);
+				draw_rect(wall_x, wall_y, wall_size, wall_size, white);
 			}
 		}
+	}
+}
+
+void draw_finish(vec2_t finish) {
+
+	int padding = 4;
+	int x_leg_length = cell_size - (padding * 2);
+
+	// Draw the first leg of the x starting at the top left and moving to the
+	// bottom right.
+	for (int i = 0; i < x_leg_length; i++) {
+		int pixel_x = (finish.x * cell_size) + padding + i;
+		int pixel_y = (finish.y * cell_size) + padding + i;
+		draw_pixel(pixel_x, pixel_y, white);
+	}
+
+	// Draw the second leg of the x starting at the bottom left and moving to
+	// the top right.
+	for (int i = 0; i < x_leg_length; i++) {
+		int pixel_x = (finish.x * cell_size) + padding + i;
+		// It's hard for me to explain subtracting 1 from x_leg_length.
+		// With a padding of 2 and a cell size of 20, we are going to draw 16
+		// pixels per leg of the x with indices 0 to 15. If we are drawing one
+		// leg starting at the bottom left corner, we want the y to start at
+		// pixel 15. When we compute this, if we add the whole leg length of 16
+		// to the start pixel position of 0, we end up at the 16th pixel. This
+		// is wrong because we only want to color in 15 pixels from index 0 to
+		// 15.
+		int pixel_y = (finish.y * cell_size) + padding + (x_leg_length - 1) - i;
+		draw_pixel(pixel_x, pixel_y, white);
 	}
 }
 
