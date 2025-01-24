@@ -108,6 +108,44 @@ void draw_rect(int x, int y, int width, int height, uint32_t color) {
 	}
 }
 
+/**
+ * How do we draw a line?
+ * Let's say our start is 2,0 and end is 5,5.
+ * Distance of line is 5.8.
+ * Let's sample 6 points along the line from start to finish.
+ * We draw the point on whichever pixel is closest to it.
+ *
+ * I suspect the above is a little wrong.
+ *
+ * But this fine for now.
+ *
+ * The straight lines drawn in gimp look different.
+ *
+ * There's a pikuma section on line drawing.
+ *
+ */
+void draw_line(vec2_t start, vec2_t finish, uint32_t color) {
+	float x_distance = finish.x - start.x;
+	float y_distance = finish.y - start.y;
+
+	float distance = sqrtf((x_distance * x_distance) + (y_distance * y_distance));
+
+	int num_samples = (int) ceilf(distance);
+
+	vec2_t delta_between_samples = {
+		.x = x_distance / num_samples,
+		.y = y_distance / num_samples
+	};
+
+	for (int i = 0; i <= num_samples; i++) {
+		vec2_t point = {
+			.x = round(start.x + (i * delta_between_samples.x)),
+			.y = round(start.y + (i * delta_between_samples.y)),
+		};
+		draw_pixel(point.x, point.y, 0xFFFFFFFF);
+	}
+};
+
 void draw_walls(int walls[20][20]) {
 	int wall_padding = 2;
 	for (int y = 0; y < 20; y++) {
@@ -150,6 +188,25 @@ void draw_finish(vec2_t finish) {
 		int pixel_y = (finish.y * cell_size) + padding + (x_leg_length - 1) - i;
 		draw_pixel(pixel_x, pixel_y, white);
 	}
+}
+
+void draw_player(vec2_t player) {
+	int padding = 4;
+	vec2_t bottom_left = {
+		.x = player.x * cell_size + padding,
+		.y = (player.y * cell_size) + cell_size - 1 - padding
+	};
+	vec2_t top_middle = {
+		.x = (player.x * cell_size) + (cell_size / 2),
+		.y = player.y * cell_size + padding
+	};
+	draw_line(bottom_left, top_middle, white);
+	vec2_t bottom_right = {
+		.x = (player.x * cell_size) + cell_size - 1 - padding,
+		.y = (player.y * cell_size) + cell_size - 1 - padding,
+	};
+	draw_line(top_middle, bottom_right, white);
+	draw_line(bottom_right, bottom_left, white);
 }
 
 void destroy_window(void) {

@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 #include "level.h"
 #include "vector.h"
@@ -18,8 +20,10 @@ bool initialize_window(void);
 void draw_grid(void);
 void draw_pixel(int x, int y, uint32_t color);
 void draw_rect(int x, int y, int width, int height, uint32_t color);
+void draw_line(vec2_t start, vec2_t finish, uint32_t color);
 void draw_walls(int walls[20][20]);
 void draw_finish(vec2_t finish);
+void draw_player(vec2_t player);
 void render_color_buffer(void);
 void clear_color_buffer(uint32_t color);
 void destroy_window(void);
