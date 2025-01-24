@@ -6,6 +6,7 @@
 #include "vector.h"
 
 bool is_running = false;
+level_state_t level1_state;
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * (window_width * window_height));
@@ -16,6 +17,9 @@ void setup(void) {
 		window_width,
 		window_height
 	);
+	level1_state = (level_state_t){
+		.player = level1.start
+	};
 }
 
 void process_input(void) {
@@ -29,6 +33,18 @@ void process_input(void) {
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_ESCAPE) {
 				is_running = false;
+			}
+			if (event.key.keysym.scancode == SDL_SCANCODE_UP || event.key.keysym.scancode == SDL_SCANCODE_W) {
+				level1_state.player.y--;
+			}
+			if (event.key.keysym.scancode == SDL_SCANCODE_DOWN || event.key.keysym.scancode == SDL_SCANCODE_S) {
+				level1_state.player.y++;
+			}
+			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_A) {
+				level1_state.player.x--;
+			}
+			if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_D) {
+				level1_state.player.x++;
 			}
 			break;
 	}
@@ -48,7 +64,7 @@ void render(void) {
 
 	draw_walls(level1.walls);
 	draw_finish(level1.finish);
-	draw_player(level1.start);
+	draw_player(level1_state.player);
 
 	// Copies our color buffer to an SDL texture and copies the SDL texture to
 	// the current SDL rendering target.

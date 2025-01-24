@@ -142,7 +142,7 @@ void draw_line(vec2_t start, vec2_t finish, uint32_t color) {
 			.x = round(start.x + (i * delta_between_samples.x)),
 			.y = round(start.y + (i * delta_between_samples.y)),
 		};
-		draw_pixel(point.x, point.y, 0xFFFFFFFF);
+		draw_pixel(point.x, point.y, color);
 	}
 };
 
