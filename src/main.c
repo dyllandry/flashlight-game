@@ -17,9 +17,7 @@ void setup(void) {
 		window_width,
 		window_height
 	);
-	level1_state = (level_state_t){
-		.player = level1.start
-	};
+	level1_state = create_level_state(level1);
 }
 
 void process_input(void) {
@@ -51,9 +49,18 @@ void process_input(void) {
 }
 
 void update(void) {
+	if ((level1_state.player.x != level1.start.x || level1_state.player.y != level1.start.y) && !level1_state.player_moved) {
+		level1_state.player_moved = true;
+	}
+
 	bool wallCollision = level1.walls[(int)level1_state.player.y][(int)level1_state.player.x];
 	if (wallCollision) {
-		level1_state.player = level1.start;
+		level1_state = create_level_state(level1);
+	}
+
+	bool levelFinished = level1.finish.x == (int)level1_state.player.x && level1.finish.y == (int)level1_state.player.y;
+	if (levelFinished) {
+		level1_state = create_level_state(level1);
 	}
 }
 

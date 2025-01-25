@@ -27,3 +27,11 @@ level_t level1 = {
 	}
 };
 
+level_state_t create_level_state(level_t level) {
+	level_state_t level_state = {
+		.player = level.start,
+		.player_moved = false,
+	};
+	return level_state;
+}
+
