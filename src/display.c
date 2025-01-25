@@ -93,7 +93,7 @@ void draw_pixel(int x, int y, uint32_t color) {
 void draw_grid(void) {
 	for (int row = 0; row < window_height; row++) {
 		for (int col = 0; col < window_width; col++) {
-			if (row % 10 == 0 && col % 10 == 0) {
+			if (row % 20 == 0 && col % 20 == 0) {
 				draw_pixel(col, row, 0xFF555555);
 			}
 		}
@@ -146,11 +146,11 @@ void draw_line(vec2_t start, vec2_t finish, uint32_t color) {
 	}
 };
 
-void draw_walls(int walls[20][20]) {
+void draw_walls(const int walls[20][20], level_state_t level_state) {
 	int wall_padding = 2;
 	for (int y = 0; y < 20; y++) {
 		for (int x = 0; x < 20; x++) {
-			if (walls[y][x] == 1) {
+			if (walls[y][x] == 1 && !level_state.player_moved) {
 				int wall_y = (y * cell_size) + wall_padding;
 				int wall_x = (x * cell_size) + wall_padding;
 				int wall_size = cell_size - (wall_padding * 2);

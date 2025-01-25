@@ -15,7 +15,7 @@ typedef struct {
 	bool player_moved;
 } level_state_t;
 
-extern level_t level1;
+extern const level_t levels[2];
 
 level_state_t create_level_state(level_t level);
 

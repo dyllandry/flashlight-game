@@ -21,7 +21,7 @@ void draw_grid(void);
 void draw_pixel(int x, int y, uint32_t color);
 void draw_rect(int x, int y, int width, int height, uint32_t color);
 void draw_line(vec2_t start, vec2_t finish, uint32_t color);
-void draw_walls(int walls[20][20]);
+void draw_walls(const int walls[20][20], level_state_t level_state);
 void draw_finish(vec2_t finish);
 void draw_player(vec2_t player);
 void render_color_buffer(void);

@@ -6,7 +6,8 @@
 #include "vector.h"
 
 bool is_running = false;
-level_state_t level1_state;
+level_state_t level_state;
+int level_index = 0;
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * (window_width * window_height));
@@ -17,7 +18,7 @@ void setup(void) {
 		window_width,
 		window_height
 	);
-	level1_state = create_level_state(level1);
+	level_state = create_level_state(levels[level_index]);
 }
 
 void process_input(void) {
@@ -33,34 +34,41 @@ void process_input(void) {
 				is_running = false;
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_UP || event.key.keysym.scancode == SDL_SCANCODE_W) {
-				level1_state.player.y--;
+				level_state.player.y--;
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_DOWN || event.key.keysym.scancode == SDL_SCANCODE_S) {
-				level1_state.player.y++;
+				level_state.player.y++;
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_A) {
-				level1_state.player.x--;
+				level_state.player.x--;
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_D) {
-				level1_state.player.x++;
+				level_state.player.x++;
 			}
 			break;
 	}
 }
 
 void update(void) {
-	if ((level1_state.player.x != level1.start.x || level1_state.player.y != level1.start.y) && !level1_state.player_moved) {
-		level1_state.player_moved = true;
+	level_t level = levels[level_index];
+
+	if ((level_state.player.x != level.start.x || level_state.player.y != level.start.y) && !level_state.player_moved) {
+		level_state.player_moved = true;
 	}
 
-	bool wallCollision = level1.walls[(int)level1_state.player.y][(int)level1_state.player.x];
+	bool wallCollision = level.walls[(int)level_state.player.y][(int)level_state.player.x];
 	if (wallCollision) {
-		level1_state = create_level_state(level1);
+		level_state = create_level_state(level);
 	}
 
-	bool levelFinished = level1.finish.x == (int)level1_state.player.x && level1.finish.y == (int)level1_state.player.y;
+	bool levelFinished = level.finish.x == (int)level_state.player.x && level.finish.y == (int)level_state.player.y;
 	if (levelFinished) {
-		level1_state = create_level_state(level1);
+		level_index++;
+		if (level_index == sizeof(levels) / sizeof(levels[0])) {
+			level_index = 0;
+		}
+		level_t next_level = levels[level_index];
+		level_state = create_level_state(next_level);
 	}
 }
 
@@ -73,9 +81,11 @@ void render(void) {
 	// Draw a grid on screen for debugging shape sizes.
 	draw_grid();
 
-	draw_walls(level1.walls);
-	draw_finish(level1.finish);
-	draw_player(level1_state.player);
+	level_t level = levels[level_index];
+
+	draw_walls(level.walls, level_state);
+	draw_finish(level.finish);
+	draw_player(level_state.player);
 
 	// Copies our color buffer to an SDL texture and copies the SDL texture to
 	// the current SDL rendering target.
