@@ -51,6 +51,10 @@ void process_input(void) {
 }
 
 void update(void) {
+	bool wallCollision = level1.walls[(int)level1_state.player.y][(int)level1_state.player.x];
+	if (wallCollision) {
+		level1_state.player = level1.start;
+	}
 }
 
 void render(void) {
