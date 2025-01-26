@@ -24,6 +24,7 @@ void draw_line(vec2_t start, vec2_t finish, uint32_t color);
 void draw_walls(const int walls[20][20], level_state_t level_state);
 void draw_finish(vec2_t finish);
 void draw_player(vec2_t player);
+void draw_flashlight_charges(level_state_t level_state, level_t level);
 void render_color_buffer(void);
 void clear_color_buffer(uint32_t color);
 void destroy_window(void);

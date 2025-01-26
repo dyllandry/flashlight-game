@@ -35,15 +35,35 @@ void process_input(void) {
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_UP || event.key.keysym.scancode == SDL_SCANCODE_W) {
 				level_state.player.y--;
+				if (level_state.flashlight_on) {
+					level_state.flashlight_on = false;
+				}
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_DOWN || event.key.keysym.scancode == SDL_SCANCODE_S) {
 				level_state.player.y++;
+				if (level_state.flashlight_on) {
+					level_state.flashlight_on = false;
+				}
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_A) {
 				level_state.player.x--;
+				if (level_state.flashlight_on) {
+					level_state.flashlight_on = false;
+				}
 			}
 			if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_D) {
 				level_state.player.x++;
+				if (level_state.flashlight_on) {
+					level_state.flashlight_on = false;
+				}
+			}
+			if (
+				event.key.keysym.scancode == SDL_SCANCODE_SPACE
+				&& !level_state.flashlight_on
+				&& level_state.flashlight_charges > 0
+			) {
+				level_state.flashlight_on = true;
+				level_state.flashlight_charges--;
 			}
 			break;
 	}
@@ -86,6 +106,7 @@ void render(void) {
 	draw_walls(level.walls, level_state);
 	draw_finish(level.finish);
 	draw_player(level_state.player);
+	draw_flashlight_charges(level_state, level);
 
 	// Copies our color buffer to an SDL texture and copies the SDL texture to
 	// the current SDL rendering target.
