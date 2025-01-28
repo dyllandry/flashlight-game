@@ -78,7 +78,9 @@ void update(void) {
 
 	bool wallCollision = level.walls[(int)level_state.player.y][(int)level_state.player.x];
 	if (wallCollision) {
-		level_state = create_level_state(level);
+		level_index = 0;
+		level_t first_level = levels[level_index];
+		level_state = create_level_state(first_level);
 	}
 
 	bool levelFinished = level.finish.x == (int)level_state.player.x && level.finish.y == (int)level_state.player.y;

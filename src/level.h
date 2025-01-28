@@ -18,7 +18,7 @@ typedef struct {
 	bool flashlight_on;
 } level_state_t;
 
-extern const level_t levels[7];
+extern const level_t levels[6];
 
 level_state_t create_level_state(level_t level);
 
