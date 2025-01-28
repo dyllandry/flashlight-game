@@ -2,12 +2,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 #include "display.h"
 #include "vector.h"
 
 bool is_running = false;
 level_state_t level_state;
 int level_index = 0;
+clock_t clock_time_at_player_collision = 0;
+
+float seconds_since_clock_time(clock_t clock_time) {
+	return (float) (clock()-clock_time) / CLOCKS_PER_SEC;
+}
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * (window_width * window_height));
@@ -33,25 +39,25 @@ void process_input(void) {
 			if (event.key.keysym.sym == SDLK_ESCAPE) {
 				is_running = false;
 			}
-			if (event.key.keysym.scancode == SDL_SCANCODE_UP || event.key.keysym.scancode == SDL_SCANCODE_W) {
+			if ((event.key.keysym.scancode == SDL_SCANCODE_UP || event.key.keysym.scancode == SDL_SCANCODE_W) && !level_state.player_collided) {
 				level_state.player.y--;
 				if (level_state.flashlight_on) {
 					level_state.flashlight_on = false;
 				}
 			}
-			if (event.key.keysym.scancode == SDL_SCANCODE_DOWN || event.key.keysym.scancode == SDL_SCANCODE_S) {
+			if ((event.key.keysym.scancode == SDL_SCANCODE_DOWN || event.key.keysym.scancode == SDL_SCANCODE_S) && !level_state.player_collided) {
 				level_state.player.y++;
 				if (level_state.flashlight_on) {
 					level_state.flashlight_on = false;
 				}
 			}
-			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_A) {
+			if ((event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_A) && !level_state.player_collided) {
 				level_state.player.x--;
 				if (level_state.flashlight_on) {
 					level_state.flashlight_on = false;
 				}
 			}
-			if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_D) {
+			if ((event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_D) && !level_state.player_collided) {
 				level_state.player.x++;
 				if (level_state.flashlight_on) {
 					level_state.flashlight_on = false;
@@ -61,6 +67,7 @@ void process_input(void) {
 				event.key.keysym.scancode == SDL_SCANCODE_SPACE
 				&& !level_state.flashlight_on
 				&& level_state.flashlight_charges > 0
+				&& !level_state.player_collided
 			) {
 				level_state.flashlight_on = true;
 				level_state.flashlight_charges--;
@@ -77,10 +84,9 @@ void update(void) {
 	}
 
 	bool wallCollision = level.walls[(int)level_state.player.y][(int)level_state.player.x];
-	if (wallCollision) {
-		level_index = 0;
-		level_t first_level = levels[level_index];
-		level_state = create_level_state(first_level);
+	if (wallCollision && !level_state.player_collided) {
+		level_state.player_collided = true;
+		clock_time_at_player_collision = clock();
 	}
 
 	bool levelFinished = level.finish.x == (int)level_state.player.x && level.finish.y == (int)level_state.player.y;
@@ -92,6 +98,12 @@ void update(void) {
 		level_t next_level = levels[level_index];
 		level_state = create_level_state(next_level);
 	}
+
+	if (level_state.player_collided && seconds_since_clock_time(clock_time_at_player_collision) > 2) {
+		level_index = 0;
+		level_t first_level = levels[level_index];
+		level_state = create_level_state(first_level);
+	};
 }
 
 void render(void) {
@@ -107,7 +119,7 @@ void render(void) {
 
 	draw_walls(level.walls, level_state);
 	draw_finish(level.finish);
-	draw_player(level_state.player);
+	draw_player(level_state.player, level_state);
 	draw_flashlight_charges(level_state, level);
 
 	// Copies our color buffer to an SDL texture and copies the SDL texture to

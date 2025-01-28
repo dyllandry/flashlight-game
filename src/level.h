@@ -16,6 +16,7 @@ typedef struct {
 	bool player_moved;
 	int flashlight_charges;
 	bool flashlight_on;
+	bool player_collided;
 } level_state_t;
 
 extern const level_t levels[6];

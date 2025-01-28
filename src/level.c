@@ -186,7 +186,8 @@ level_state_t create_level_state(level_t level) {
 		.player = level.start,
 		.player_moved = false,
 		.flashlight_charges = level.flashlight_charges,
-		.flashlight_on = false
+		.flashlight_on = false,
+		.player_collided = false,
 	};
 	return level_state;
 }

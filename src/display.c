@@ -8,6 +8,7 @@ int window_width = 800;
 int window_height = 600;
 int cell_size = 20;
 uint32_t white = 0xFFCCCCCC;
+uint32_t red = 0xFFFF0000;
 
 bool initialize_window(void) {
 	// What bits of hardware do you want to initialize?
@@ -150,7 +151,7 @@ void draw_walls(const int walls[20][20], level_state_t level_state) {
 	int wall_padding = 2;
 	for (int y = 0; y < 20; y++) {
 		for (int x = 0; x < 20; x++) {
-			if (walls[y][x] == 1 && (!level_state.player_moved || level_state.flashlight_on)) {
+			if (walls[y][x] == 1 && (!level_state.player_moved || level_state.player_collided || level_state.flashlight_on)) {
 				int wall_y = (y * cell_size) + wall_padding;
 				int wall_x = (x * cell_size) + wall_padding;
 				int wall_size = cell_size - (wall_padding * 2);
@@ -190,7 +191,12 @@ void draw_finish(vec2_t finish) {
 	}
 }
 
-void draw_player(vec2_t player) {
+void draw_player(vec2_t player, level_state_t level_state) {
+	uint32_t player_color = white;
+	if (level_state.player_collided) {
+		player_color = red;
+	}
+	
 	int padding = 4;
 	vec2_t bottom_left = {
 		.x = player.x * cell_size + padding,
@@ -200,13 +206,13 @@ void draw_player(vec2_t player) {
 		.x = (player.x * cell_size) + (cell_size / 2),
 		.y = player.y * cell_size + padding
 	};
-	draw_line(bottom_left, top_middle, white);
+	draw_line(bottom_left, top_middle, player_color);
 	vec2_t bottom_right = {
 		.x = (player.x * cell_size) + cell_size - 1 - padding,
 		.y = (player.y * cell_size) + cell_size - 1 - padding,
 	};
-	draw_line(top_middle, bottom_right, white);
-	draw_line(bottom_right, bottom_left, white);
+	draw_line(top_middle, bottom_right, player_color);
+	draw_line(bottom_right, bottom_left, player_color);
 }
 
 void draw_icon(int x, int y, int pixels[20][20], uint32_t color) {
