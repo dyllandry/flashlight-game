@@ -19,7 +19,7 @@ typedef struct {
 	bool player_collided;
 } level_state_t;
 
-extern const level_t levels[6];
+extern const level_t levels[13];
 
 level_state_t create_level_state(level_t level);
 
